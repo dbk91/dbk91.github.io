@@ -7,3 +7,7 @@
 body {
   @apply bg-gray-800 
 }
+
+.square-link {
+  @apply h-16 w-16 p-4 text-white flex justify-center items-center
+}

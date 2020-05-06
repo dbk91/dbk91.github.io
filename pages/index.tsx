@@ -1,11 +1,22 @@
+import * as React from 'react'
 import axios from 'axios'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
-import { faGithub, faCodepen, faLinkedin } from '@fortawesome/free-brands-svg-icons'
+import { faEnvelope, faBlog } from '@fortawesome/free-solid-svg-icons'
+import { faGithub, faCodepen, faLinkedin, faKeybase } from '@fortawesome/free-brands-svg-icons'
 
 import Nav from '../components/nav'
 
+const safeLinkProps = {
+  target: '_blank',
+  rel: 'noopener noreferrer',
+}
+
 export default (props) => { 
+  const { email } = props
+  const emailUrl = React.useMemo(() => {
+    return `mailto:${email}?subject=${encodeURIComponent('Reaching Out')}&body=${encodeURIComponent('Hello Daniel,')}`
+  }, [email])
+
   return (
     <div className="sm:flex max-w-none md:container md:mx-auto">
       <div className="w-full sm:w-auto pt-4 pb-4 sm:p-0 flex sm:block items-center">
@@ -17,20 +28,26 @@ export default (props) => {
           <p className="text-white text-xl opacity-50">{props.bio}</p>
         </div>
         <div className="flex justify-center sm:justify-end items-center bg-gray-700">
+          <a href={process.env.KEYBASE_URL} {...safeLinkProps} className="square-link bg-indigo-600">
+            <FontAwesomeIcon icon={faKeybase} size="2x" />
+          </a>
+          <a href={props.blog} className="square-link bg-green-600">
+            <FontAwesomeIcon icon={faBlog} size="2x" />
+          </a>
           {props.email && (
-            <a href={`mailto:${props.email}`} className="h-16 w-16 bg-yellow-600 text-white flex justify-center items-center">
+            <a href={emailUrl} className="square-link bg-yellow-600">
               <FontAwesomeIcon icon={faEnvelope} size="2x" />
             </a>
           )}
-          <div className="h-16 w-16 bg-purple-600 text-white flex justify-center items-center">
+          <a href={process.env.CODEPEN_URL} {...safeLinkProps} className="square-link bg-purple-600">
             <FontAwesomeIcon icon={faCodepen} size="2x" />
-          </div>
-          <div className="h-16 w-16 bg-blue-600 text-white flex justify-center items-center">
+          </a>
+          <a href={process.env.LINKEDIN_URL} {...safeLinkProps} className="square-link bg-blue-600">
             <FontAwesomeIcon icon={faLinkedin} size="2x" />
-          </div>
-          <div className="h-16 w-16 bg-orange-500 text-white flex justify-center items-center">
+          </a>
+          <a href={props.html_url} {...safeLinkProps} className="square-link bg-orange-500">
             <FontAwesomeIcon icon={faGithub} size="2x" />
-          </div>
+          </a>
         </div>
       </div>
     </div>
@@ -38,7 +55,12 @@ export default (props) => {
  }
 
 export async function getStaticProps() {
-  const res = await axios.get('https://api.github.com/users/dbk91')
+  const res = await axios.get(`https://api.github.com/users/${process.env.GITHUB_USERNAME}`, {
+    auth: {
+      username: process.env.GITHUB_USERNAME,
+      password: process.env.GITHUB_API_TOKEN,
+    },
+  })
 
   return {
     props: res.data,
