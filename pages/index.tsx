@@ -11,7 +11,7 @@ const safeLinkProps = {
   rel: 'noopener noreferrer',
 }
 
-export default (props) => { 
+export default (props) => {
   const { email } = props
   const emailUrl = React.useMemo(() => {
     return `mailto:${email}?subject=${encodeURIComponent('Reaching Out')}&body=${encodeURIComponent('Hello Daniel,')}`
