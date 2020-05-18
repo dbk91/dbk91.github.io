@@ -63,6 +63,15 @@ export default (props) => {
  }
 
 export async function getStaticProps() {
+  const missingRequiredEnv = [
+    process.env.GITHUB_USERNAME,
+    process.env.GITHUB_API_TOKEN,
+  ].some(env => typeof env === 'undefined')
+
+  if (missingRequiredEnv) {
+    throw new Error('Please enter every required environment variable.')
+  }
+
   const auth = {
     username: process.env.GITHUB_USERNAME,
     password: process.env.GITHUB_API_TOKEN,
